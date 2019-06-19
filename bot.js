@@ -13,11 +13,12 @@ var missions = [
     [2, 3, 3, 40, 4],
     [3, 4, 4, 50, 5]
 ];
+var misNum;
 var players = new Array();
 var spies = new Array();
 var ids = new Array();
 var status = "waiting";
-var leader;
+var leaderNum;
 
 bot.on('message', message => {
     if(message.author.id != '587771244485672970' && message.content.substring(0,1) == '!') {
@@ -25,26 +26,27 @@ bot.on('message', message => {
 
         switch(arg) {
             case 'join':
-                if(!ids.includes(message.author) && status == "waiting") {
+                if(!ids.includes(message.author.id) && status == "waiting") {
                     ids.push(message.author.id);
                     players.push(message.author);
                     message.reply(" has join the game.");
                     console.log(players);
                 }
                 else {
-                    message.reply(" you have already joined.");
+                    message.reply(" you have already joined or the game is in session.");
                 }
             break;
 
             case 'start':
                 if((players.length <= 4 || players.length >= 11) && status != "waiting") {
-                    message.channel.send("There are not enough players or the game has started. 5 players are needed to start.");
+                    message.channel.send("There are not enough players or the game has started.
+                                          5 players are needed to start and up to 10 players can play.");
                 }
                 //starting game
                 else {
                     message.channel.send("Starting game...");
                     players = shuffle(players);
-                    leader = players[Math.floor(Math.random() * (players.length+1))];
+                    leaderNum = Math.floor(Math.random() * (players.length+1));
                     status = "picking";
 
                     //sending players their role
@@ -52,9 +54,7 @@ bot.on('message', message => {
 
                     spies.forEach(user => {
                         user.send("You are the **SPY**. The spies are:");
-
                         var spySend = spies.map(x => " " + x.tag );
-
                         user.send("The fellow spies are: " + spySend.toString());
                     });
 
@@ -62,12 +62,27 @@ bot.on('message', message => {
                         user.send("You are the **RESISTANCE**.");
                     });
 
-                    message.channel.send("<@" + leader.id + "> is the leader. Use !pick @user to pick your team.");
+                    message.channel.send("<@" + players[leaderNum].id + "> is the leader. Use !pick @user to pick your team.");
+
+                    //Set the number of people going on the missions
+                    misNum = players.length - 5;
+                    if(misNum > 3) {
+                        misNum = 3;
+                    }
                 }
             break;
 
             case 'pick':
+                //first person has to pick the players and each player then votes
+                if(status != "picking") {
+                    message.channel.send("You cannot picking the current phase of the game. The current phase is: " + status);
+                }
+                else if(message.author.id != players[leaderNum].id) {
+                    message.channel.send("Only the leader <@" + players[leaderNum].id + "> can pick the team.");
+                }
+                else {
 
+                }
             break;
         }
     }
