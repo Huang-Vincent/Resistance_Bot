@@ -13,12 +13,13 @@ var missions = [
     [2, 3, 3, 40, 4],
     [3, 4, 4, 50, 5]
 ];
-var misNum;
+var misNum, leaderNum, roundNum;
 var players = new Array();
 var spies = new Array();
 var ids = new Array();
+var team = new Array();
+var teamIds = new Array();
 var status = "waiting";
-var leaderNum;
 
 bot.on('message', message => {
     if(message.author.id != '587771244485672970' && message.content.substring(0,1) == '!') {
@@ -48,6 +49,7 @@ bot.on('message', message => {
                     players = shuffle(players);
                     leaderNum = Math.floor(Math.random() * (players.length+1));
                     status = "picking";
+                    roundNum = 0;
 
                     //sending players their role
                     spies = players.splice(0, Math.ceil(players.length/3));
@@ -62,7 +64,8 @@ bot.on('message', message => {
                         user.send("You are the **RESISTANCE**.");
                     });
 
-                    message.channel.send("<@" + players[leaderNum].id + "> is the leader. Use !pick @user to pick your team.");
+                    message.channel.send("<@" + players[leaderNum].id + "> is the leader. Use !pick @user(s) to pick your team, !lock to lock in your team
+                                         and !list to see your team.");
 
                     //Set the number of people going on the missions
                     misNum = players.length - 5;
@@ -81,7 +84,12 @@ bot.on('message', message => {
                     message.channel.send("Only the leader <@" + players[leaderNum].id + "> can pick the team.");
                 }
                 else {
+                    if(team.length > mission[misNum][roundNum]) {
+                        message.channel.send("You can only have " + mission[misNum][roundNum] + " players for this team.");
+                    }
+                    else if(teamIds.includes(message.)) {
 
+                    }
                 }
             break;
         }
