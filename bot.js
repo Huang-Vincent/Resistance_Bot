@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const Shuffle = require('knuth-shuffle');
+ var shuffle = require('knuth-shuffle').knuthShuffle;
 const fs = require('fs');
 const bot = new Discord.Client();
 
@@ -34,7 +34,7 @@ bot.on('message', message => {
             case 'join':
                 if(!players.includes(message.author.id) && status == "waiting") {
                     players.push(message.author.id);
-                    message.reply(" has join the game. Type !leave to leave the game.");
+                    message.reply(" has joined the game. Type !leave to leave the game.");
                 }
                 else if(players.includes(message.author.id)) {
                     message.reply(" You have already joined.");
@@ -71,13 +71,13 @@ bot.on('message', message => {
                     room = bot.channels.get(message.channel.id);
 
                     //sending players their role
-                    resistance = players;
+                    resistance = players.slice(0);
                     spies = resistance.splice(0, Math.ceil(resistance.length/3));
 
                     spies.forEach(id => {
                         bot.fetchUser(id).then(user => {
                             spyUsers.push(" " + user);
-                        })
+                        });
                     });
 
                     spies.forEach(id => {
@@ -174,7 +174,7 @@ bot.on('message', message => {
                     team.forEach(id => {
                         bot.fetchUser(id).then(user => {
                             teamUsers.push(" " + user);
-                        })
+                        });
                     });
                     message.channel.send("The current team is: " + teamUsers.toString());
                     teamUsers = [];
@@ -202,7 +202,7 @@ bot.on('message', message => {
                         yesVote.forEach(id => {
                             bot.fetchUser(id).then(user => {
                                 yesUsers.push(" " + user);
-                            })
+                            });
                         });
                         room.send("The following have voted **YES**: " + yesUsers.toString());
 
@@ -210,7 +210,7 @@ bot.on('message', message => {
                         noVote.forEach(id => {
                             bot.fetchUser(id).then(user => {
                                 noUsers.push(" " + user);
-                            })
+                            });
                         });
                         room.send("The following have voted **NO**: " + noUsers.toString());
 
