@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
- var shuffle = require('knuth-shuffle').knuthShuffle;
+var shuffle = require('knuth-shuffle').knuthShuffle;
 const fs = require('fs');
 const bot = new Discord.Client();
 
@@ -55,7 +55,8 @@ bot.on('message', message => {
             break;
 
             case 'start':
-                if((players.length <= 4 || players.length >= 11) && status != "waiting") {
+                console.log(players);
+                if((players.length <= 4 || players.length >= 11) || status != "waiting") {
                     message.channel.send("There are not enough players or the game has started. 5 players are needed to start and up to 10 players can play.");
                 }
                 //starting game
@@ -100,7 +101,6 @@ bot.on('message', message => {
                     if(misNum > 3) {
                         misNum = 3;
                     }
-
                     message.channel.send("You can pick " + missions[misNum][roundNum] + " players for your team.");
                 }
             break;
@@ -110,8 +110,8 @@ bot.on('message', message => {
                 if(status != "picking") {
                     message.channel.send("You cannot pick in the current phase of the game. The current phase is: " + status);
                 }
-                else if(message.author.id != players[leaderNum].id) {
-                    message.channel.send("Only the leader <@" + players[leaderNum].id + "> can pick the team.");
+                else if(message.author.id != players[leaderNum]) {
+                    message.channel.send("Only the leader <@" + players[leaderNum] + "> can pick the team.");
                 }
                 else {
                     let picks = message.mentions.users.array();
@@ -119,6 +119,7 @@ bot.on('message', message => {
                         //Add to team if not already on team
                         if(!team.includes(pick.id)) {
                             team.push(pick.id);
+                            message.channel.send("<@" + pick.id + "> has been added.");
                         } else {
                             message.channel.send("<@" + pick.id + "> is already on the team.");
                         }
@@ -143,6 +144,7 @@ bot.on('message', message => {
 
             case 'lock':
                 if(status == "picking") {
+                  console.log(team);
                     if(team.length == missions[misNum][roundNum]) {
                         message.channel.send("The team has been locked in. Everyone will now vote.");
 
